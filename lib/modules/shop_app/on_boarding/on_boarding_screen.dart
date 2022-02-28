@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:project/modules/shop_app/shop_login/shop_login_screen.dart';
 import 'package:project/shared/components/components.dart';
+import 'package:project/shared/network/local/cash_helper.dart';
 import 'package:project/shared/styles/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class BoardingModel{
+class BoardingModel {
   final String tittle;
   final String body;
   final String image;
@@ -15,17 +16,15 @@ class BoardingModel{
   });
 }
 
-
-class OnBoardingScreen extends StatefulWidget
-{
+class OnBoardingScreen extends StatefulWidget {
   @override
   State<OnBoardingScreen> createState() => _OnBoardingScreenState();
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
-  var boardcontroller=PageController();
+  var boardcontroller = PageController();
 
-  List<BoardingModel>boarding=[
+  List<BoardingModel> boarding = [
     BoardingModel(
       tittle: 'On Board 1 Tittle',
       body: 'On Board 1 Body',
@@ -43,7 +42,18 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     ),
   ];
 
-  bool isLast=false;
+  bool isLast = false;
+
+  void submit() {
+    CashHelper.saveData(key: 'onBoarding', value: true).then((value) {
+      if (value) {
+        navigatAndFinish(
+          context,
+          ShopLoginScreen(),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +61,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       appBar: AppBar(
         actions: [
           defultTextButton(
-            function:(){
-              navigatAndFinish(context,ShopLoginScreen(),);
-            },
-            text:'skip',
+            function: submit,
+            text: 'skip',
           ),
         ],
       ),
@@ -64,52 +72,54 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           children: [
             Expanded(
               child: PageView.builder(
-                onPageChanged: (int index){
-                  if(index==boarding.length-1){
+                onPageChanged: (int index) {
+                  if (index == boarding.length - 1) {
                     print('is last');
                     setState(() {
-                      isLast=true;
+                      isLast = true;
                     });
-
-                  }
-                  else{
+                  } else {
                     print('not last');
                     setState(() {
-                      isLast=false;
+                      isLast = false;
                     });
                   }
                 },
-                controller: boardcontroller ,
-                physics:BouncingScrollPhysics(),
-                itemBuilder: (context,index)=>BuilBoardingItem(boarding[index]),
+                controller: boardcontroller,
+                physics: BouncingScrollPhysics(),
+                itemBuilder: (context, index) =>
+                    BuilBoardingItem(boarding[index]),
                 itemCount: boarding.length,
               ),
             ),
-            SizedBox(height: 40.0,),
+            SizedBox(
+              height: 40.0,
+            ),
             Row(
               children: [
                 SmoothPageIndicator(
-                    effect:ExpandingDotsEffect(
+                    effect: ExpandingDotsEffect(
                       dotColor: Colors.grey,
                       dotHeight: 10,
                       dotWidth: 10,
                       spacing: 5.0,
                       expansionFactor: 4,
                       activeDotColor: defultcolor,
-                    ) ,
-                    controller: boardcontroller, count: boarding.length),
+                    ),
+                    controller: boardcontroller,
+                    count: boarding.length),
                 Spacer(),
                 FloatingActionButton(
                   backgroundColor: defultcolor,
-                  onPressed: (){
-                    if(isLast){
-                      navigatAndFinish(context,ShopLoginScreen(),);
-                    }
-                    else{
-                      boardcontroller.nextPage(duration: Duration(
-                        milliseconds: 750,
-                      ),
-                        curve:Curves.fastLinearToSlowEaseIn,
+                  onPressed: () {
+                    if (isLast) {
+                      submit;
+                    } else {
+                      boardcontroller.nextPage(
+                        duration: Duration(
+                          milliseconds: 750,
+                        ),
+                        curve: Curves.fastLinearToSlowEaseIn,
                       );
                     }
                   },
@@ -125,30 +135,32 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     );
   }
 
-  Widget BuilBoardingItem(BoardingModel model)=>Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(
-        child: Image(
-          image:AssetImage('${model.image}'),
-        ),
-      ),
-      SizedBox(
-        height: 30.0,
-      ),
-      Text(
-        '${model.tittle}',
-        style: TextStyle(
-          fontSize: 24.0,
-        ),
-      ),
-      SizedBox(height: 30.0,),
-      Text(
-        '${model.body}',
-        style: TextStyle(
-          fontSize: 14.0,
-        ),
-      ),
-    ],
-  );
+  Widget BuilBoardingItem(BoardingModel model) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Image(
+              image: AssetImage('${model.image}'),
+            ),
+          ),
+          SizedBox(
+            height: 30.0,
+          ),
+          Text(
+            '${model.tittle}',
+            style: TextStyle(
+              fontSize: 24.0,
+            ),
+          ),
+          SizedBox(
+            height: 30.0,
+          ),
+          Text(
+            '${model.body}',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ],
+      );
 }

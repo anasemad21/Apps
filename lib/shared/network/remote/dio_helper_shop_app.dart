@@ -11,22 +11,22 @@ class DioHelperShopApp {
       BaseOptions(
         baseUrl: 'https://student.valuxapps.com/api/',
         receiveDataWhenStatusError: true,
-        headers: {
-          'Content-Type': 'application/json',
-          'lang':'en',
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   'lang':'en',
+        // },
       ),
     );
   }
 
   static Future<Response> getData({
     required String url,
-    required Map<String, dynamic>? query,
+    Map<String, dynamic>? query,
     String lang = 'en',
     String? token,
   }) async {
     dio.options.headers = {
-      // 'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
       'lang': lang,
       'Authorization': token ?? '',
     };
@@ -44,7 +44,7 @@ class DioHelperShopApp {
     String? token,
   }) async {
     dio.options.headers = {
-      //'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
       'lang': lang,
       'Authorization': token ?? '',
     };
@@ -54,5 +54,26 @@ class DioHelperShopApp {
       queryParameters: query,
     );
   }
+
+
+  static Future<Response> putData({
+    required String url,
+    required Map<String, dynamic>? data,
+    Map<String, dynamic>? query,
+    String lang = 'en',
+    String? token,
+  }) async {
+    dio.options.headers = {
+      'Content-Type': 'application/json',
+      'lang': lang,
+      'Authorization': token ?? '',
+    };
+    return  dio.put(
+      url,
+      data: data,
+      queryParameters: query,
+    );
+  }
+
 }
 
